@@ -2,6 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_DIG_NUMBER 3
+
+int getNumberOfCustomers() {
+        FILE *file;
+        int lines = 0;
+        file = fopen("customer.txt","r");
+        char c;
+
+        while ((fscanf(file, "%c", &c)) != EOF) {
+                if (c == 10) {
+                        lines++;
+                }
+                
+        }
+        fclose(file);
+        return lines + 1;
+}
+
 void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
 
         int customer = 0;
@@ -15,9 +33,8 @@ void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
         while (feof(file) == 0) {
                 
                 cond = fgets(line, 100, file);
-                if (cond)
-                {
-                        char num[3];
+                if (cond) {
+                        char num[MAX_DIG_NUMBER + 1];
                         int count = 0;
                         for (int i = 0; i < 100; i++) {
 
@@ -28,9 +45,9 @@ void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
                                 } else {
                                         maxResources[customer][resource] = atoi(num);
                                         count = 0;
-                                        num[0] = '\0';
-                                        num[1] = '\0';
-                                        num[2] = '\0';
+                                        for (int j = 0; j < MAX_DIG_NUMBER + 1; j++) {
+                                                num[j] = '\0';
+                                        }
                                         resource++;
                                 }
 
@@ -47,25 +64,5 @@ void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
                 
         }
         fclose(file);
-        
-}
-
-int main() {
-        int customers = 6, resources = 4;
-        int maxResources[customers][resources];
-  
-        getMaximumDemandResources(customers, resources, maxResources);
-
-        for (int i = 0; i < customers; i++) {
-                printf("%d Customer\n", i);
-                
-                for (int j = 0; j < resources; j++) {
-                        printf("%d ", maxResources[i][j]);
-                }
-
-                printf("\n");
-                printf("\n");
-                
-        }
         
 }
