@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
+void getMaximumDemandResources(int cus, int res, int **maxResources) {
 
         int customer = 0;
         int resource = 0;
@@ -51,16 +51,19 @@ void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
 }
 
 int main() {
-        int customers = 6, resources = 4;
-        int maxResources[customers][resources];
-  
-        getMaximumDemandResources(customers, resources, maxResources);
+        int customers = 6, resources = 3;
+        int **maxResourcesOfCustomers;
+        maxResourcesOfCustomers = malloc(customers * sizeof(int *));
+        for (int i = 0; i < customers; i++) {
+                maxResourcesOfCustomers[i] = malloc(resources * sizeof(int));
+        }
+        getMaximumDemandResources(customers, resources, maxResourcesOfCustomers);
 
         for (int i = 0; i < customers; i++) {
                 printf("%d Customer\n", i);
                 
                 for (int j = 0; j < resources; j++) {
-                        printf("%d ", maxResources[i][j]);
+                        printf("%d ", maxResourcesOfCustomers[i][j]);
                 }
 
                 printf("\n");

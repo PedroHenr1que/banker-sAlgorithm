@@ -20,7 +20,7 @@ int getNumberOfCustomers() {
         return lines + 1;
 }
 
-void getMaximumDemandResources(int cus, int res, int maxResources[cus][res]) {
+void getMaximumDemandResources(int cus, int res, int **maxResources) {
 
         int customer = 0;
         int resource = 0;
