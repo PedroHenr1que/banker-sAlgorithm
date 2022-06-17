@@ -7,15 +7,27 @@
 
 int main(int argc, char *argv[]) {
 
-        int amountOfResources = argc - 1;
+        int numberOfResources = argc - 1;
         int count = 0;
-        int availableResources[amountOfResources];
-        for (int i = 1; i < amountOfResources; i++) {
-                availableResources[count] = atoi(argv[i]);
-                count ++;
+        int availableResources[numberOfResources];
+        
+        for (int i = 0; i < numberOfResources; i++) {
+                availableResources[i] = atoi(argv[i+1]);
         }
         
         int numberOfCustomers = getNumberOfCustomers();
-        int maxResources[numberOfCustomers][amountOfResources];
-        int allocatedResources[numberOfCustomers][amountOfResources];
+        int maxResourcesOfCustomers[numberOfCustomers][numberOfResources];
+        getMaximumDemandResources(numberOfCustomers, numberOfResources, maxResourcesOfCustomers);
+        // for (int i = 0; i < numberOfCustomers; i++) {
+        //         printf("%d Customer\n", i);
+                
+        //         for (int j = 0; j < numberOfResources; j++) {
+        //                 printf("%d ", maxResourcesOfCustomers[i][j]);
+        //         }
+
+        //         printf("\n");
+        //         printf("\n");
+                
+        // }
+        //int allocatedResources[numberOfCustomers][numberOfResources];
 }
