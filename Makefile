@@ -2,16 +2,20 @@ CC = gcc
 dirLibs = libs/
 OBJECTS = $(shell find Libs -name '*.o')
 
-all: customersHandler.o banker
+all: customersHandler.o archiveHandler.o banker
 
 banker:  main.c 
 	
-	$(CC) $< -o $@ $(OBJECTS) -lpthread
-
+	$(CC) $< -o $@ $(OBJECTS)
 
 customersHandler.o: $(dirLibs)customer/customersHandler.c
 
 	$(CC) -c $< -o $(dirLibs)customer/$@
+
+archiveHandler.o: $(dirLibs)archiveHandler/archiveHandler.c
+
+	$(CC) -c $< -o $(dirLibs)archiveHandler/$@
+
 
 .PHONY: clean
 

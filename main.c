@@ -2,10 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "libs/customer/customersHandler.h"
+#include "libs/archiveHandler/archiveHandler.h"
 
-void printTable();
+int resquestResources(int customerN, int request[]);
+int verifiArray(int *array1, int array2[], int interations);
 
-#define MAX_DIG_NUMBER 3
+#define TRUE 1
+#define FALSE 0
 
 int *availableResources;
 int **maxResourcesOfCustomers;
@@ -23,7 +26,6 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < numberOfResources; i++) {
                 availableResources[i] = atoi(argv[i+1]);
         }
-        
 
         //setting up the max number of resources for each consumer
         numberOfCustomers = getNumberOfCustomers();
@@ -61,7 +63,7 @@ int main(int argc, char *argv[]) {
         //getting info from commands.txt
         char command[3];
         int commandValues[numberOfResources];
-        int costumerToApplyCommand;
+        int customerToApplyCommand;
 
         FILE *commandsFile;
 
@@ -69,22 +71,48 @@ int main(int argc, char *argv[]) {
 
         while (feof(commandsFile) == 0) {
                 fscanf(commandsFile, "%s", command);
-
+                //printTable();
                 if (strcmp(command, "*") != 0) {
-                        fscanf(commandsFile, " %d", &costumerToApplyCommand);
+                        fscanf(commandsFile, " %d", &customerToApplyCommand);
 
                         for (int i = 0; i < numberOfResources; i++) {
                                 fscanf(commandsFile, " %d", &commandValues[i]);
                         }
-                        // printf("%s ", command);
-                        // printf("%d ", costumerToApplyCommand);
-                        // for (int h = 0; h < numberOfResources; h++) {
-                        //         printf("%d ", commandValues[h]);
-                        // }
-                        // printf("\n");
+
+                        if (strcmp(command, "RQ") == 0) {
+                                
+                                if (verifiArray(commandValues, need[customerToApplyCommand], numberOfResources)) {
+
+                                        if (verifiArray(commandValues, availableResources, numberOfResources)) {
+                                                if (resquestResources(customerToApplyCommand, commandValues) == 1) {
+                                                        writeAlloc(customerToApplyCommand, numberOfResources, commandValues);
+
+                                                } else {
+                                                        writeDeniedUnSt(customerToApplyCommand, numberOfResources, commandValues);
+                                                }
+
+                                        } else {
+                                                writeNotEnoughRes(customerToApplyCommand, numberOfResources, commandValues, availableResources);
+                                        }
+
+
+                                } else {
+                                        writeExceedMaxAllocation(customerToApplyCommand, numberOfResources, commandValues);
+                                }
+
+                        } else {
+                                for (int i = 0; i < numberOfResources; i++) {
+                                        allocatedResources[customerToApplyCommand][i] = allocatedResources[customerToApplyCommand][i] - commandValues[i];
+                                        need[customerToApplyCommand][i] = need[customerToApplyCommand][i] + commandValues[i];
+                                        availableResources[i] = availableResources[i] + commandValues[i];
+                                }
+                                writeRelease(customerToApplyCommand, numberOfResources, commandValues);
+                                
+                        }
+                        
                         
                 } else {
-                        printTable();
+                        printTable(numberOfResources, numberOfCustomers, maxResourcesOfCustomers, allocatedResources, need, availableResources);
                 
                 }
 
@@ -97,70 +125,63 @@ int main(int argc, char *argv[]) {
         return 1;
 }
 
-void printTable() {
-        int spacesMax = 1;
-        if (numberOfResources > 4) {
-                spacesMax = ((numberOfResources - 4) * 2) + 1;
+int resquestResources(int customerN, int request[]) {
+        for (int i = 0; i < numberOfResources; i++) {
+                availableResources[i] = availableResources[i] - request[i];
+                allocatedResources[customerN][i] = allocatedResources[customerN][i] + request[i];
+                need[customerN][i] = need[customerN][i] - request[i];
         }
 
-        int spacesAlloc = 1;
-        if (numberOfResources > 5) {
-                spacesAlloc = ((numberOfResources - 5) * 2);
+        //Safety Algorithm
+        int a = numberOfResources;
+        int work[a];
+        for (int j = 0; j < numberOfResources; j++) {
+                work[j] = availableResources[j];
         }
-
-        printf("MAXIMUM");
-        for (int i = 0; i < spacesMax; i++) {
-                printf(" ");
+        
+        int finish[numberOfCustomers];
+        for (int i = 0; i < numberOfCustomers; i++) {
+                finish[i] = FALSE;
         }
-        printf("|");
-
-        printf(" ALLOCATION");
-        for (int i = 0; i < spacesAlloc; i++) {
-                printf(" ");
-        }
-        printf("|");
-
-        printf(" NEED\n");
         
 
         for (int i = 0; i < numberOfCustomers; i++) {
-                //printing MAXIMUM
-                for (int j = 0; j < numberOfResources; j++) {
-                        printf("%d ", maxResourcesOfCustomers[i][j]);
-                }
-
-                if ((numberOfResources*2) < 8) {
-                        for (int x = 0; x < (8 - (numberOfResources*2)); x++) {
-                                printf(" ");
-                        }
-                }
-                printf("|");
                 
-                //printing ALLOCATION
-                printf(" ");
-                for (int j = 0; j < numberOfResources; j++) {
-                        printf("%d ", allocatedResources[i][j]);
-                }
+                for (int j = 0; j < numberOfCustomers; j++) {
 
-                if ((numberOfResources*2) < 11) {
-                        for (int x = 0; x < (11 - (numberOfResources*2)); x++) {
-                                printf(" ");
+                        if (finish[j] == FALSE && verifiArray(need[j], work, numberOfResources)) {
+
+                                for (int k = 0; k < numberOfResources; k++) {
+                                        work[k] = work[k] + allocatedResources[j][k];
+                                }
+                                finish[j] = TRUE;
                         }
-                }
-                printf("|");
 
-                //printing NEED
-                printf(" ");
-                for (int j = 0; j < numberOfResources; j++) {
-                        printf("%d ", need[i][j]);
                 }
-                printf("\n");
+        }
+
+        for (int i = 0; i < numberOfCustomers; i++) {
+                if (finish[i] == FALSE) {
+                        for (int j = 0; j < numberOfResources; j++) {
+                                availableResources[j] = availableResources[j] + request[j];
+                                allocatedResources[customerN][j] = allocatedResources[customerN][j] - request[j];
+                                need[j] = need[j] + request[j]; 
+                        }
+                        return -1;
+                }
         }
         
-        printf("AVAILABLE ");
-        for (int i = 0; i < numberOfResources; i++) {
-                printf("%d ", availableResources[i]);
+        return 1;
+}
+
+int verifiArray(int array1[], int array2[], int interations) {
+        int isValid = 1;
+        for (int i = 0; i < interations; i++) {
+                if (!(array1[i] <= array2[i])) {
+                        isValid = 0;
+                        break;
+                }
         }
-        printf("\n");
-        
+
+        return isValid;
 }
