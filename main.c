@@ -3,6 +3,7 @@
 #include <string.h>
 #include "libs/customer/customersHandler.h"
 #include "libs/archiveHandler/archiveHandler.h"
+#include "libs/errorHandler/errorHandler.h"
 
 int resquestResources(int customerN, int request[]);
 int verifiArray(int *array1, int array2[], int interations);
@@ -28,7 +29,18 @@ int main(int argc, char *argv[]) {
         }
 
         //setting up the max number of resources for each consumer
-        numberOfCustomers = getNumberOfCustomers();
+        if (checkIfFileExistAndCanBeOpen("customer.txt") != -1) {
+                numberOfCustomers = getNumberOfCustomers();
+
+        } else {
+               exit(1); 
+        }
+        
+        //check if the files exists and their format
+        if (check(numberOfResources, numberOfCustomers) == -1) {
+                exit(1);
+        }
+
         maxResourcesOfCustomers = malloc(numberOfCustomers * sizeof(int *));
         for (int i = 0; i < numberOfCustomers; i++) {
                 maxResourcesOfCustomers[i] = malloc(numberOfResources * sizeof(int));
@@ -71,7 +83,7 @@ int main(int argc, char *argv[]) {
 
         while (feof(commandsFile) == 0) {
                 fscanf(commandsFile, "%s", command);
-                //printTable();
+                
                 if (strcmp(command, "*") != 0) {
                         fscanf(commandsFile, " %d", &customerToApplyCommand);
 
