@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
 
         while (feof(commandsFile) == 0) {
                 fscanf(commandsFile, "%s", command);
-                
                 if (strcmp(command, "*") != 0) {
                         fscanf(commandsFile, " %d", &customerToApplyCommand);
 
@@ -114,12 +113,19 @@ int main(int argc, char *argv[]) {
                                 }
 
                         } else {
-                                for (int i = 0; i < numberOfResources; i++) {
-                                        allocatedResources[customerToApplyCommand][i] = allocatedResources[customerToApplyCommand][i] - commandValues[i];
-                                        need[customerToApplyCommand][i] = need[customerToApplyCommand][i] + commandValues[i];
-                                        availableResources[i] = availableResources[i] + commandValues[i];
+
+                                if (verifiArray(commandValues, allocatedResources[customerToApplyCommand], numberOfResources)) {
+                                        for (int i = 0; i < numberOfResources; i++) {
+                                                allocatedResources[customerToApplyCommand][i] = allocatedResources[customerToApplyCommand][i] - commandValues[i];
+                                                need[customerToApplyCommand][i] = need[customerToApplyCommand][i] + commandValues[i];
+                                                availableResources[i] = availableResources[i] + commandValues[i];
+                                        }
+                                        writeRelease(customerToApplyCommand, numberOfResources, commandValues);
+
+                                } else {
+                                        writeDenniedRelease(customerToApplyCommand, numberOfResources, commandValues);
+                                        
                                 }
-                                writeRelease(customerToApplyCommand, numberOfResources, commandValues);
                                 
                         }
                         
@@ -178,7 +184,7 @@ int resquestResources(int customerN, int request[]) {
                         for (int j = 0; j < numberOfResources; j++) {
                                 availableResources[j] = availableResources[j] + request[j];
                                 allocatedResources[customerN][j] = allocatedResources[customerN][j] - request[j];
-                                need[customerN][i] = need[customerN][i] + request[i];
+                                need[customerN][j] = need[customerN][j] + request[j];
                         }
                         return -1;
                 }

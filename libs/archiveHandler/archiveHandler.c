@@ -74,6 +74,20 @@ void writeRelease(int customerToApplyCommand, int numberOfResources, int command
         fclose(file);
 }
 
+void writeDenniedRelease(int customerToApplyCommand, int numberOfResources, int commandValues[]) {
+        FILE *file;
+
+        file = fopen("result.txt", "a");
+
+        fputs("The resources ", file);
+        for (int i = 0; i < numberOfResources; i++) {
+                fprintf(file, "%d ", commandValues[i]);
+        }
+        fprintf(file, "are not are not release from customer %d\n", customerToApplyCommand);
+
+        fclose(file);
+}
+
 void printTable(int numberOfResources, int numberOfCustomers, int **maxResourcesOfCustomers, int **allocatedResources, int **need, int *availableResources) {
         FILE *file;
 

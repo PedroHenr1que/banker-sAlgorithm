@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_DIG_NUMBER 3
-
 int getNumberOfCustomers() {
         FILE *file;
         int lines = 0;
