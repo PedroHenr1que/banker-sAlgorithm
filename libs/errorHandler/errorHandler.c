@@ -37,7 +37,9 @@ int checkFormatCustomers(int numberOfResources) {
 
         char line[100];
         while (feof(file) == 0) {
-                
+                for (int i = 0; i < 100; i++) {
+                        line[i] = '\0';
+                }
                 fgets(line, 100, file);
                 int validResources = 0;
                 lineWrong = count;
@@ -45,7 +47,7 @@ int checkFormatCustomers(int numberOfResources) {
                 for (int i = 0; i < 100; i++) {
 
                         //check white line
-                        if (line[i] == '\n' && i == 0) {
+                        if (line[i] == '\n' && i == 0 || line[i] == '\0' && i == 0) {
                                 fclose(file);
                                 return 1;
                         }
@@ -90,29 +92,31 @@ int checkFormatCustomers(int numberOfResources) {
         
 }
 
-int checkFormatCommands(int numberOfResources, int numberOfCustomers) {
+int checkFormatCommands(int numberOfResources) {
         int count = 0;
         FILE *file;
 
         file = fopen("commands.txt", "r");
         char line[100];
         while (feof(file) == 0) {
+                for (int i = 0; i < 100; i++) {
+                        line[i] = '\0';
+                }
                 fgets(line, 100, file);
                 lineWrong = count;
                 int validResources = 0;
 
                 if (line[0] != '\n' && line[0] != '\0') {
                         char command[3];
+                        for (int i = 0; i < 3; i++) {
+                                command[i] = '\0';
+                        }
+                        
                         command[0] = line[0];
                         command[1] = line[1];
 
                         if (strcmp(command, "RQ") == 0 || strcmp(command, "RL") == 0) {
                                 for (int i = 2; i < 100; i++) {
-                                        // //check white line
-                                        // if (line[i] == '\n' && i == 0) {
-                                        //         fclose(file);
-                                        //         return 1;
-                                        // }
 
                                         //check diferetents char than the allowed ones
                                         if (line[i] != '\0' && line[i] != '\n') {
@@ -124,20 +128,6 @@ int checkFormatCommands(int numberOfResources, int numberOfCustomers) {
                                                 break;
                                         }
                                         
-                                }
-
-                                char num[4];
-                                for (int i = 0; i < 3; i++) {
-                                        if (!isdigit(line[i+3])) {
-                                                break;
-                                        }
-                                        num[i] = line[i+3];
-                                }
-
-                                int numDec = atoi(num);
-
-                                if (numDec > numberOfCustomers || numDec < 0) {
-                                        return 3;
                                 }
                                 
                                 //checks if the amount of numbers is the same as the resources
@@ -156,7 +146,7 @@ int checkFormatCommands(int numberOfResources, int numberOfCustomers) {
 
                                 if (validResources != numberOfResources) {
                                         fclose(file);
-                                        return 4;
+                                        return 3;
                                 }
                                 
                                 
@@ -167,7 +157,7 @@ int checkFormatCommands(int numberOfResources, int numberOfCustomers) {
 
                         } else {
                                 //when there is an unidentified command
-                                return 5;
+                                return 4;
                         }
                         
 
@@ -180,7 +170,50 @@ int checkFormatCommands(int numberOfResources, int numberOfCustomers) {
         return 0;
 }
 
-int check(int numberOfResources, int numberOfCustomers) {
+int checkCustomersInCommands(int numberOfCustomers) {
+
+        int count = 0;
+        FILE *file;
+
+        file = fopen("commands.txt", "r");
+        char line[100];
+
+        while (feof(file) == 0) {
+                for (int i = 0; i < 100; i++) {
+                        line[i] = '\0';
+                }
+                fgets(line, 100, file);
+
+                char num[4];
+                for (int i = 0; i < 4; i++) {
+                        num[i] = '\0';
+                }
+                
+                for (int i = 0; i < 3; i++) {
+                        if (!isdigit(line[i+3])) {
+                                break;
+                        }
+                        num[i] = line[i+3];
+                }
+
+                int numDec = atoi(num);
+
+                if (numDec > numberOfCustomers || numDec < 0) {
+                        printf("############################ ERROR ############################\n");
+                        printf("# commands.txt\n");
+                        printf("# Error in line %d\n", count + 1);
+                        printf("# The customer number is bigger than the allowed\n");
+                        printf("# The biggest customer is %d\n", 5);
+                        printf("###############################################################\n\n");
+                        return -1;
+                }
+
+                count++;
+        }
+        return 0;
+}
+
+int check(int numberOfResources) {
         int result = 0;
         int check = 0;
         if (checkIfFileExistAndCanBeOpen("customer.txt") == -1) {
@@ -217,12 +250,12 @@ int check(int numberOfResources, int numberOfCustomers) {
                 result = -1;
 
         } else {
-                check = checkFormatCommands(numberOfResources, numberOfCustomers);
+                check = checkFormatCommands(numberOfResources);
                 if (check != 0) {
                         if (check == 1) {
                                 printf("############################ ERROR ############################\n");
                                 printf("# commands.txt\n");
-                                printf("# The archive is empty or it has a blank line in line%d\n", lineWrong + 1);
+                                printf("# The archive is empty or it has a blank line in line %d\n", lineWrong + 1);
                                 printf("###############################################################\n\n");
 
                         } else if (check == 2 ) {
@@ -237,14 +270,6 @@ int check(int numberOfResources, int numberOfCustomers) {
                                 printf("###############################################################\n\n");
 
                         } else if(check == 3) {
-                                printf("############################ ERROR ############################\n");
-                                printf("# commands.txt\n");
-                                printf("# Error in line %d\n", lineWrong + 1);
-                                printf("# The customer number is bigger or smaller than the allowed\n");
-                                printf("# The biggest customer is %d\n", 5);
-                                printf("###############################################################\n\n");
-                                
-                        } else if(check == 4) {
                                 printf("############################ ERROR ############################\n");
                                 printf("# commands.txt\n");
                                 printf("# The number of resources is differente in line %d\n", lineWrong + 1);

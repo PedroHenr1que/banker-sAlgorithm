@@ -27,20 +27,21 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < numberOfResources; i++) {
                 availableResources[i] = atoi(argv[i+1]);
         }
-
-        //setting up the max number of resources for each consumer
-        if (checkIfFileExistAndCanBeOpen("customer.txt") != -1) {
-                numberOfCustomers = getNumberOfCustomers();
-
-        } else {
-               exit(1); 
-        }
         
         //check if the files exists and their format
-        if (check(numberOfResources, numberOfCustomers) == -1) {
+        if (check(numberOfResources) == -1) {
                 exit(1);
         }
 
+        //get number of customers
+        numberOfCustomers = getNumberOfCustomers();
+
+        //check if the customers in commands are valid
+        if (checkCustomersInCommands(numberOfCustomers) == -1) {
+                exit(1);
+        }
+
+        //setting up the max number of resources for each consumer
         maxResourcesOfCustomers = malloc(numberOfCustomers * sizeof(int *));
         for (int i = 0; i < numberOfCustomers; i++) {
                 maxResourcesOfCustomers[i] = malloc(numberOfResources * sizeof(int));
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]) {
         }
         
         fclose(commandsFile);
-
+        printf("Successfully completed\n");
         return 1;
 }
 
