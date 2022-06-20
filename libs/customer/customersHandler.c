@@ -20,49 +20,31 @@ int getNumberOfCustomers() {
         return lines + 1;
 }
 
-void getMaximumDemandResources(int cus, int res, int **maxResources) {
-
+void getMaximumDemandResources(int numberOfResources, int **maxResources) {
         int customer = 0;
-        int resource = 0;
-
-        char line[100];
         FILE *file;
 
         file = fopen("customer.txt", "r");
-        char *cond;
+
         while (feof(file) == 0) {
-                
-                cond = fgets(line, 100, file);
-                if (cond) {
-                        char num[MAX_DIG_NUMBER + 1];
-                        int count = 0;
-                        for (int i = 0; i < 100; i++) {
-
-                                if (line[i] != 44 && line[i] != 10 && line[i] != '\0') {
-                                        num[count] = line[i];
-                                        count++;
-
-                                } else {
-                                        maxResources[customer][resource] = atoi(num);
-                                        count = 0;
-                                        for (int j = 0; j < MAX_DIG_NUMBER + 1; j++) {
-                                                num[j] = '\0';
-                                        }
-                                        resource++;
-                                }
-
-                                if (line[i] == 10 || customer == cus - 1 && resource == res) {
-                                        break;
-
-                                } 
-                                
+                char num[10];
+                if (numberOfResources > 1) {
+                        for (int i = 0; i < numberOfResources - 1; i++) {
+                                fscanf(file, "%[^,]", num);
+                                fgetc(file);
+                                maxResources[customer][i] = atoi(num);
                         }
-                        customer++;
-                        resource = 0;
+                        fscanf(file, "%s", num);
+                        maxResources[customer][numberOfResources-1] = atoi(num);
+
+                } else {
+                        fscanf(file, "%s", num);
+                        maxResources[customer][numberOfResources-1] = atoi(num);
+
                 }
-                
-                
+                fgetc(file);
+                customer++;
         }
+
         fclose(file);
-        
 }

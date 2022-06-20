@@ -1,2 +1,2 @@
 int getNumberOfCustomers();
-void getMaximumDemandResources(int cus, int res, int **maxResources);
+void getMaximumDemandResources(int numberOfResources, int **maxResources);

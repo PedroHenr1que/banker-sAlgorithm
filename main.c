@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < numberOfCustomers; i++) {
                 maxResourcesOfCustomers[i] = malloc(numberOfResources * sizeof(int));
         }
-        getMaximumDemandResources(numberOfCustomers, numberOfResources, maxResourcesOfCustomers);
+        getMaximumDemandResources(numberOfResources, maxResourcesOfCustomers);
         
 
         //setting up the amount of resources allocated to each consumer (starts with 0)
@@ -178,7 +178,7 @@ int resquestResources(int customerN, int request[]) {
                         for (int j = 0; j < numberOfResources; j++) {
                                 availableResources[j] = availableResources[j] + request[j];
                                 allocatedResources[customerN][j] = allocatedResources[customerN][j] - request[j];
-                                need[j] = need[j] + request[j]; 
+                                need[customerN][i] = need[customerN][i] + request[i];
                         }
                         return -1;
                 }
