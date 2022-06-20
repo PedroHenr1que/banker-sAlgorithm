@@ -20,6 +20,11 @@ Its has two functions, "getNumberOfCustomers()" that is responsible for get the 
 <br/>
 <br/>
 
+## errorHandler.c
+This archive has functions to verify if all the files necessary for the program execution are in the right format, if they exists and can be open.
+<br/>
+<br/>
+
 ## main.c
 Here contains all the logic for the Banker's Algorithm.
 <br/>
