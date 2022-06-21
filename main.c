@@ -6,7 +6,7 @@
 #include "libs/errorHandler/errorHandler.h"
 
 int resquestResources(int customerN, int request[]);
-int verifiArray(int *array1, int array2[], int interations);
+int verifyArray(int *array1, int array2[], int interations);
 
 #define TRUE 1
 #define FALSE 0
@@ -93,9 +93,9 @@ int main(int argc, char *argv[]) {
 
                         if (strcmp(command, "RQ") == 0) {
                                 
-                                if (verifiArray(commandValues, need[customerToApplyCommand], numberOfResources)) {
+                                if (verifyArray(commandValues, need[customerToApplyCommand], numberOfResources)) {
 
-                                        if (verifiArray(commandValues, availableResources, numberOfResources)) {
+                                        if (verifyArray(commandValues, availableResources, numberOfResources)) {
                                                 if (resquestResources(customerToApplyCommand, commandValues) == 1) {
                                                         writeAlloc(customerToApplyCommand, numberOfResources, commandValues);
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 
                         } else {
 
-                                if (verifiArray(commandValues, allocatedResources[customerToApplyCommand], numberOfResources)) {
+                                if (verifyArray(commandValues, allocatedResources[customerToApplyCommand], numberOfResources)) {
                                         for (int i = 0; i < numberOfResources; i++) {
                                                 allocatedResources[customerToApplyCommand][i] = allocatedResources[customerToApplyCommand][i] - commandValues[i];
                                                 need[customerToApplyCommand][i] = need[customerToApplyCommand][i] + commandValues[i];
@@ -152,8 +152,7 @@ int resquestResources(int customerN, int request[]) {
         }
 
         //Safety Algorithm
-        int a = numberOfResources;
-        int work[a];
+        int work[numberOfResources];
         for (int j = 0; j < numberOfResources; j++) {
                 work[j] = availableResources[j];
         }
@@ -168,7 +167,7 @@ int resquestResources(int customerN, int request[]) {
                 
                 for (int j = 0; j < numberOfCustomers; j++) {
 
-                        if (finish[j] == FALSE && verifiArray(need[j], work, numberOfResources)) {
+                        if (finish[j] == FALSE && verifyArray(need[j], work, numberOfResources)) {
 
                                 for (int k = 0; k < numberOfResources; k++) {
                                         work[k] = work[k] + allocatedResources[j][k];
@@ -179,6 +178,7 @@ int resquestResources(int customerN, int request[]) {
                 }
         }
 
+        //verify is it's in a safe state, if it isn't the allocation is undone.
         for (int i = 0; i < numberOfCustomers; i++) {
                 if (finish[i] == FALSE) {
                         for (int j = 0; j < numberOfResources; j++) {
@@ -193,7 +193,7 @@ int resquestResources(int customerN, int request[]) {
         return 1;
 }
 
-int verifiArray(int array1[], int array2[], int interations) {
+int verifyArray(int array1[], int array2[], int interations) {
         int isValid = 1;
         for (int i = 0; i < interations; i++) {
                 if (!(array1[i] <= array2[i])) {

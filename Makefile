@@ -1,6 +1,6 @@
 CC = gcc
 dirLibs = libs/
-OBJECTS = $(shell find Libs -name '*.o')
+OBJECTS = $(shell find libs -name '*.o')
 
 all: errorHandler.o customersHandler.o archiveHandler.o banker
 
@@ -23,5 +23,5 @@ errorHandler.o: $(dirLibs)errorHandler/errorHandler.c
 .PHONY: clean
 
 clean:	
-	find Libs -name '*.o' -type f -delete 
-	rm banker
+	find libs -name '*.o' -type f -delete 
+	rm banker	
