@@ -26,7 +26,7 @@ This archive has functions to verify if all the files necessary for the program 
 <br/>
 
 ## main.c
-Here contains all the logic for the Banker's Algorithm.
+Here contains all the logic for the Banker's Algorithm, also the Safety Algorithm.
 <br/>
 <br/>
 
@@ -67,6 +67,8 @@ The format to execute the program is the one below:
 * **Obs:**
 
 The files commands.txt and customer.txt must have the same amount of resources that are being passed through the command line.
+
+The files commands.txt and customer.txt must be in the same directory as the archive main.c.
 <br/>
 <br/>
 
