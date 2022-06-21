@@ -26,7 +26,7 @@ This archive has functions to verify if all the files necessary for the program 
 <br/>
 
 ## main.c
-Here contains all the logic for the Banker's Algorithm.
+Here contains all the logic for the Banker's Algorithm, also the Safety Algorithm.
 <br/>
 <br/>
 
